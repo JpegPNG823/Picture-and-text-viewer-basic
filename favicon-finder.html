@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Favicon Finder (.ico Viewer)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f7f9fb;
+    }
+
+    input[type="text"] {
+      width: 60%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+
+    img {
+      margin-top: 30px;
+      width: 64px;
+      height: 64px;
+      border: 1px solid #ccc;
+    }
+
+    #download {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    #error {
+      color: red;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Favicon (.ico) Finder</h1>
+
+  <input type="text" id="siteUrl" placeholder="Enter website URL (e.g. https://example.com)">
+  <button onclick="fetchFavicon()">Find Favicon</button>
+
+  <div id="output">
+    <img id="favicon" src="" alt="Favicon" style="display:none;">
+    <a id="download" href="#" download="favicon.ico" style="display:none;">⬇️ Download Favicon</a>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    function fetchFavicon() {
+      const input = document.getElementById("siteUrl");
+      const url = input.value.trim();
+      const favicon = document.getElementById("favicon");
+      const download = document.getElementById("download");
+      const error = document.getElementById("error");
+
+      favicon.style.display = "none";
+      download.style.display = "none";
+      error.textContent = "";
+
+      if (!url) {
+        error.textContent = "Please enter a website URL.";
+        return;
+      }
+
+      let fullUrl;
+      try {
+        const u = new URL(url);
+        fullUrl = u.origin + "/favicon.ico";
+      } catch (e) {
+        error.textContent = "Invalid URL format.";
+        return;
+      }
+
+      // Try to fetch favicon to check existence
+      fetch(fullUrl, { mode: "no-cors" })
+        .then(() => {
+          favicon.src = fullUrl;
+          favicon.style.display = "inline";
+          download.href = fullUrl;
+          download.style.display = "inline";
+        })
+        .catch(() => {
+          error.textContent = "Could not fetch favicon (may be blocked by CORS).";
+        });
+    }
+  </script>
+</body>
+</html>
