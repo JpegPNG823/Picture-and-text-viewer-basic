@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Draw on Image with Gradient Background</title>
+  <title>Draw on Image with Grey-Blue Background</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Include icojs library for ICO export -->
   <script src="https://cdn.jsdelivr.net/npm/icojs/dist/ico.js"></script>
@@ -11,9 +11,9 @@
       font-family: sans-serif;
       padding: 20px;
       text-align: center;
-      /* Gradient background for the webpage */
-      background: linear-gradient(to right, #ffcccc, #ccccff);
-      /* Optional: add some min height for better appearance */
+      /* Grey to Blue gradient background for webpage */
+      background: linear-gradient(to right, #999999, #0000ff);
+      /* Optional: ensure the background covers full height */
       min-height: 100vh;
     }
 
@@ -59,7 +59,7 @@
     let painting = false;
     let mode = 'draw'; // 'draw' or 'fill'
 
-    // Create the mode toggle button
+    // Create mode toggle button
     const modeButton = document.createElement('button');
     modeButton.id = 'modeButton';
     modeButton.textContent = 'Mode: Draw';
@@ -76,7 +76,7 @@
       }
     }
 
-    // Event listeners for drawing or filling
+    // Drawing and filling events
     canvas.addEventListener('mousedown', (e) => {
       if (mode === 'fill') {
         fillAtPoint(e);
@@ -109,12 +109,10 @@
       painting = true;
       draw(e);
     }
-
     function endPosition() {
       painting = false;
       ctx.beginPath();
     }
-
     function draw(e) {
       if (!painting) return;
       const rect = canvas.getBoundingClientRect();
@@ -130,7 +128,7 @@
     }
 
     function clearCanvas() {
-      drawBackgroundGradient(); // draw the gradient background
+      drawBackgroundGradient(); // draw the grey-blue gradient background
     }
 
     function downloadImage() {
@@ -156,7 +154,7 @@
       link.click();
     }
 
-    // Save as ICO function
+    // Save as ICO
     function saveAsIco() {
       const dataURL = canvas.toDataURL('image/png'); // ICO uses PNG
       fetch(dataURL)
@@ -295,14 +293,14 @@
 
     // Draw the gradient background for the webpage
     function drawBackgroundGradient() {
-      document.body.style.background = 'linear-gradient(to right, #ffcccc, #ccccff)';
+      document.body.style.background = 'linear-gradient(to right, #999999, #0000ff)';
     }
 
-    // Initialize with gradient background
+    // Initialize with the grey-blue gradient background
     drawBackgroundGradient();
 
-    // Optional: redraw gradient on window resize if needed
-    window.addEventListener('resize', drawBackgroundGradient);
+    // Optional: update background on resize if desired
+    // window.addEventListener('resize', drawBackgroundGradient);
   </script>
 </body>
 </html>
