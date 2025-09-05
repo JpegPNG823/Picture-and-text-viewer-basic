@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Draw on Image</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Include icojs library -->
+  <script src="https://cdn.jsdelivr.net/npm/icojs/dist/ico.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -40,6 +42,7 @@
     <button onclick="clearCanvas()">Clear</button>
     <button onclick="downloadImage()">Download PNG</button>
     <button onclick="saveAsJpg()">Save as JPG</button>
+    <button onclick="saveAsIco()">Save as ICO</button>
   </div>
   <script>
     const canvas = document.getElementById('canvas');
@@ -134,6 +137,29 @@
       link.href = dataURL;
       link.download = 'drawing.jpg';
       link.click();
+    }
+
+    // Save as ICO function
+    function saveAsIco() {
+      const dataURL = canvas.toDataURL('image/png'); // ICO uses PNG
+      fetch(dataURL)
+        .then(res => res.arrayBuffer())
+        .then(buffer => {
+          icojs
+            .encode(
+              [{ width: 64, height: 64, data: new Uint8Array(buffer) }],
+              { sizes: [64] }
+            )
+            .then(icoBuffer => {
+              const blob = new Blob([icoBuffer], { type: 'image/x-icon' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'icon.ico';
+              a.click();
+              URL.revokeObjectURL(url);
+            });
+        });
     }
 
     // Load image from file
