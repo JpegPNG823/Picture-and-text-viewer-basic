@@ -2,25 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Draw on Image</title>
+  <title>Draw on Image with Gradient Background</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Include icojs library for ICO export -->
+  <script src="https://cdn.jsdelivr.net/npm/icojs/dist/ico.js"></script>
   <style>
     body {
       font-family: sans-serif;
       padding: 20px;
       text-align: center;
+      /* Gradient background for the webpage */
+      background: linear-gradient(to right, #ffcccc, #ccccff);
+      /* Optional: add some min height for better appearance */
+      min-height: 100vh;
     }
+
     canvas {
       border: 1px solid #ccc;
       cursor: crosshair;
       max-width: 100%;
     }
+
     input[type="range"] {
       width: 100px;
     }
+
     #controls {
       margin: 10px 0;
     }
+
     #imageInput,
     #imageURL {
       margin: 5px 0;
@@ -41,6 +51,7 @@
     <button onclick="downloadImage()">Download PNG</button>
     <button onclick="saveAsJpg()">Save as JPG</button>
     <button onclick="saveAsWebP()">Save as WebP</button>
+    <button onclick="saveAsIco()">Save as ICO</button>
   </div>
   <script>
     const canvas = document.getElementById('canvas');
@@ -48,7 +59,7 @@
     let painting = false;
     let mode = 'draw'; // 'draw' or 'fill'
 
-    // Mode toggle button
+    // Create the mode toggle button
     const modeButton = document.createElement('button');
     modeButton.id = 'modeButton';
     modeButton.textContent = 'Mode: Draw';
@@ -119,7 +130,7 @@
     }
 
     function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackgroundGradient(); // draw the gradient background
     }
 
     function downloadImage() {
@@ -137,13 +148,35 @@
       link.click();
     }
 
-    // Save as WebP
     function saveAsWebP() {
       const dataURL = canvas.toDataURL('image/webp', 0.95);
       const link = document.createElement('a');
       link.href = dataURL;
       link.download = 'drawing.webp';
       link.click();
+    }
+
+    // Save as ICO function
+    function saveAsIco() {
+      const dataURL = canvas.toDataURL('image/png'); // ICO uses PNG
+      fetch(dataURL)
+        .then(res => res.arrayBuffer())
+        .then(buffer => {
+          icojs
+            .encode(
+              [{ width: 64, height: 64, data: new Uint8Array(buffer) }],
+              { sizes: [64] }
+            )
+            .then(icoBuffer => {
+              const blob = new Blob([icoBuffer], { type: 'image/x-icon' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'icon.ico';
+              a.click();
+              URL.revokeObjectURL(url);
+            });
+        });
     }
 
     // Load image from file
@@ -155,6 +188,7 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           canvas.width = img.width;
           canvas.height = img.height;
+          drawBackgroundGradient(); // draw gradient background
           ctx.drawImage(img, 0, 0);
         };
         img.src = event.target.result;
@@ -174,6 +208,7 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           canvas.width = img.width;
           canvas.height = img.height;
+          drawBackgroundGradient(); // draw gradient background
           ctx.drawImage(img, 0, 0);
         };
         img.onerror = function() {
@@ -257,6 +292,17 @@
         }
       }
     }
+
+    // Draw the gradient background for the webpage
+    function drawBackgroundGradient() {
+      document.body.style.background = 'linear-gradient(to right, #ffcccc, #ccccff)';
+    }
+
+    // Initialize with gradient background
+    drawBackgroundGradient();
+
+    // Optional: redraw gradient on window resize if needed
+    window.addEventListener('resize', drawBackgroundGradient);
   </script>
 </body>
 </html>
